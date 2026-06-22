@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Survival Challenge</title>
+<style>
+body{font-family:Arial,sans-serif;background:#eef5ff;text-align:center;padding:30px}
+.container{max-width:700px;margin:auto;background:white;padding:25px;border-radius:15px;box-shadow:0 5px 20px #aaa}
+.item{display:inline-block;margin:8px}
+input[type=text]{padding:12px;width:70%;border-radius:10px;border:1px solid #aaa}
+button{padding:12px 25px;border:none;border-radius:20px;background:#1565c0;color:white;cursor:pointer;margin-top:20px}
+.option{display:block;width:80%;margin:10px auto;background:#f1f1f1;color:black}
+.score{font-size:30px;color:#1565c0}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<h1>🌪️ Survival Challenge</h1>
+<p><b>Natural Disaster Safety Activity</b></p>
+
+<div id="selection">
+<h3>Enter Your Name</h3>
+<input type="text" id="employeeName" placeholder="Enter your name">
+
+<h3>Select Your 5 Emergency Lifelines</h3>
+
+<div>
+<label class="item"><input type="checkbox" value="Torch"> 🔦 Torch</label>
+<label class="item"><input type="checkbox" value="Water"> 💧 Water</label>
+<label class="item"><input type="checkbox" value="First Aid"> 🩹 First Aid</label>
+<label class="item"><input type="checkbox" value="Power Bank"> 🔋 Power Bank</label>
+<label class="item"><input type="checkbox" value="Documents"> 📄 Documents</label>
+<label class="item"><input type="checkbox" value="Rope"> 🪢 Rope</label>
+<label class="item"><input type="checkbox" value="Blanket"> 🧥 Blanket</label>
+<label class="item"><input type="checkbox" value="Food"> 🍫 Food</label>
+<label class="item"><input type="checkbox" value="Radio"> 📻 Radio</label>
+<label class="item"><input type="checkbox" value="Shoes"> 👟 Shoes</label>
+</div>
+
+<button onclick="startGame()">Start Survival</button>
+</div>
+
+<div id="game" style="display:none">
+<h2 id="situation"></h2>
+<h3>Select your best item:</h3>
+<div id="choices"></div>
+<p id="feedback"></p>
+</div>
+
+<div id="result"></div>
+
+</div>
+
+<script>
+let chosen=[], question=0, score=0;
+
+let situations=[
+{text:"🌊 Flood: Water is rising and electricity is gone. What will help most?",
+answers:{"Water":3,"Torch":5,"Food":4,"Rope":5,"Shoes":2}},
+{text:"🌍 Earthquake: You need to move through damaged areas safely.",
+answers:{"Shoes":5,"First Aid":4,"Torch":4,"Blanket":2,"Documents":1}},
+{text:"🔥 Fire Emergency: Smoke is blocking visibility.",
+answers:{"Torch":3,"Blanket":5,"Shoes":4,"Water":2,"Radio":1}},
+{text:"⛈ Storm: You may need to survive overnight without support.",
+answers:{"Blanket":5,"Food":5,"Radio":4,"Power Bank":4,"Documents":1}},
+{text:"🚑 Rescue delay: Help arrives after 6 hours.",
+answers:{"First Aid":5,"Food":5,"Water":5,"Power Bank":4,"Rope":3}}
+];
+
+function startGame(){
+let name=document.getElementById("employeeName").value;
+if(!name.trim()){alert("Please enter your name!");return;}
+
+chosen=[];
+document.querySelectorAll("input:checked").forEach(x=>chosen.push(x.value));
+
+if(chosen.length!=5){alert("Please select exactly 5 items!");return;}
+
+document.getElementById("selection").style.display="none";
+document.getElementById("game").style.display="block";
+showQuestion();
+}
+
+function showQuestion(){
+let q=situations[question];
+document.getElementById("situation").innerHTML=q.text;
+let box=document.getElementById("choices");
+box.innerHTML="";
+
+chosen.forEach(item=>{
+let btn=document.createElement("button");
+btn.className="option";
+btn.innerHTML=item;
+
+btn.onclick=function(){
+let marks=q.answers[item] || 1;
+score+=marks;
+document.getElementById("feedback").innerHTML="Survival Impact: "+marks+"/5";
+
+setTimeout(()=>{
+question++;
+document.getElementById("feedback").innerHTML="";
+
+if(question<situations.length){showQuestion();}
+else{endGame();}
+},1000);
+};
+
+box.appendChild(btn);
+});
+}
+
+function endGame(){
+document.getElementById("game").style.display="none";
+
+let percent=(score/25)*100;
+let message=percent>=90?"🏆 Disaster Ready Champion":
+percent>=70?"🥇 Strong Survivor":
+percent>=50?"👍 Good Awareness":
+"🌱 Keep Learning Safety Skills";
+
+let name=document.getElementById("employeeName").value;
+
+document.getElementById("result").innerHTML=
+`<h1>Challenge Completed!</h1>
+<h2>Employee: ${name}</h2>
+<p class="score">${score}/25</p>
+<h2>${message}</h2>
+<p>The right choices can make all the difference during emergencies.</p>`;
+}
+</script>
+
+</body>
+</html>
